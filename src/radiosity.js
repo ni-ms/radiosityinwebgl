@@ -1,3 +1,11 @@
+/*
+
+This function appears to be setting up a framebuffer in WebGL, a system for rendering interactive 3D graphics in a web browser. It creates a framebuffer object (fb), a texture object (tex), and a renderbuffer object (renderbuffer). It then configures the texture object with certain parameters, creates a blank texture image for it, and attaches the texture and renderbuffer to the framebuffer as the color and depth attachments, respectively.
+
+The function also defines a method, idTriangles, which appears to be extracting information about triangles from a 3D model and storing it in an array. It iterates over the meshes in the model, and for each mesh it iterates over the indices of its triangles, extracting the vertex positions and storing them in a triangle object. It then calculates the tangent of the triangle and the surface normal, and stores these as well. Finally, it pushes the triangle object into the triangles array and increments a triangle count.
+ */
+
+
 function radiosity(gl, model) {
   let fb = gl.createFramebuffer();
   let tex = gl.createTexture();
