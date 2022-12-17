@@ -1,5 +1,6 @@
 # radiosityinwebgl
-A webgl implementation of radiosity
+A webgl implementation of radiosity:
+https://ni-ms.github.io/radiosityinwebgl/
 
 Group Members:
 - Rishi
