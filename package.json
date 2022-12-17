@@ -6,16 +6,16 @@
     "type": "git",
     "url": "git+https://github.com/YunYouJun/webgl-radiosity.git"
   },
-  "author": "YunYouJun <me@yunyoujun.cn>",
+  "author": "nikms",
   "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "live-server",
     "start": "http-server"
   },
-  "homepage": "https://www.yunyoujun.cn/webgl-radiosity/",
+  "homepage": "www.google.com",
   "bugs": {
-    "url": "https://github.com/YunYouJun/webgl-radiosity/issues"
+    "url": "www.google.com"
   },
   "directories": {
     "lib": "lib"
