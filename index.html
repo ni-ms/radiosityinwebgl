@@ -2,12 +2,215 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Preact</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>WebGL-Radiosity</title>
+    <link rel="shortcut icon" href="./logo.png" />
+<!--    <link-->
+<!--      rel="stylesheet"-->
+<!--      href="https://cdn.jsdelivr.net/npm/@zeit-ui/style@latest/dist/style.css"-->
+<!--    />-->
+
+    <!-- Font Awesome -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+            rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css"
+            rel="stylesheet"
+    />
+
+    </style>
+
+<!--    <link rel="stylesheet" href="./css/index.css" />-->
+    <!-- lib -->
+      <!-- MDB -->
+      <script
+              type="text/javascript"
+              src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"
+      ></script>
+    <script type="text/javascript" src="./lib/webgl-debug.js"></script>
+    <script type="text/javascript" src="./lib/webgl-utils.js"></script>
+    <script type="text/javascript" src="./lib/cuon-matrix.js"></script>
+    <script type="text/javascript" src="./lib/cuon-utils.js"></script>
   </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.jsx"></script>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <!-- Container wrapper -->
+      <div class="container">
+          <!-- Navbar brand -->
+          <a class="navbar-brand me-2" href="https://github.com/ni-ms/cgpdocs">
+           Computer Graphics Project
+          </a>
+
+          <!-- Toggle button -->
+          <button
+                  class="navbar-toggler"
+                  type="button"
+                  data-mdb-toggle="collapse"
+                  data-mdb-target="#navbarButtonsExample"
+                  aria-controls="navbarButtonsExample"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+          >
+              <i class="fas fa-bars"></i>
+          </button>
+
+          <!-- Collapsible wrapper -->
+          <div class="collapse navbar-collapse" id="navbarButtonsExample">
+              <!-- Left links -->
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">Home</a>
+                  </li>
+              </ul>
+              <!-- Left links -->
+
+              <div class="d-flex align-items-center">
+
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-primary me-3" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+                      About
+                  </button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Webgl implementation of radiosity</h5>
+                                  <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  The aim of this project was to implement a 3D renderer capable of simulating global illumination with radiosity, one of the oldest global illumination methods (first published in 1984). Radiosity can handle rendering diffuse surfaces very well while being viewpoint independent, having natural color bleeding and soft shadows. Yet it is seldom used because of how computationally intensive it is.
+
+                                  Most existing implementations exclusively use the CPU to perform all operations, which is terribly inefficient since most of them can be parallelized, making them a prime choice to off-load to the GPU. Our implementation aims to perform all mutually independent operations that have to be performed on a dataset to be performed on the GPU with the rest that have to be performed sequentially on the CPU.
+
+
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <a
+                          class="btn btn-dark px-3"
+                          href="https://ni-ms.github.io/cgpdocs/"
+                          role="button"
+                  ><i class="fab fa-github"></i
+                  ></a>
+              </div>
+          </div>
+          <!-- Collapsible wrapper -->
+      </div>
+      <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+  <body class="zi-main zi-layout">
+
+
+<!--    <h1>WebGL-Radiosity</h1>-->
+<!--    <p class="zi-note hint">-->
+<!--      <span class="zi-note-type">HINT:</span>-->
+<!--      Please use latest Chrome browser.-->
+<!--    </p>-->
+
+
+    <div id="canvas-box" class="zi-card">
+      <canvas id="glCanvas" width="800" height="400"></canvas>
+    </div>
+
+    <div class="control">
+<!--      <p class="zi-note alert">-->
+<!--        <span class="zi-note-type">ALERT:</span>-->
+<!--        Enable show will reduce the speed.-->
+<!--      </p>-->
+
+      <p>
+<!--        <span class="zi-checkbox-container" onclick="check(this)">-->
+<!--          <span class="zi-toggle"></span>-->
+<!--          <span class="zi-checkbox-label">Show Process</span>-->
+<!--        </span>-->
+      </p>
+
+      <div class="py-3">
+        <div class="zi-input-group prefix py-3">
+          <label for="iterations" class="form-label">Number of Iterations</label>
+           <input
+            id="iterations"
+            class="form-control"
+            type="number"
+            name="iterations"
+            value="10"
+            oninput="init()"
+            placeholder="iterations"
+          />
+        </div>
+
+        <div class="zi-input-group prefix py-3">
+          <span class="form-label">Subdivisions:</span>
+          <input
+            id="subdivisions"
+            class="form-control"
+            type="number"
+            name="subdivisions"
+            value="5"
+            oninput="init()"
+            placeholder="subdivisions"
+          />
+        </div>
+      </div>
+
+      <p class="py-3">
+
+        <button
+          id="start"
+          class="btn btn-primary btn-sm"
+          type="button"
+          onclick="main()"
+        >
+          Start
+        </button>
+
+        <button
+          id="control-status"
+          class="btn btn-primary btn-sm"
+          type="button"
+          onclick="toggleStatus()"
+        >
+          Pause
+        </button>
+      </p>
+<!--      <p>-->
+<!--        <kbd>W</kbd>-->
+<!--        <kbd>A</kbd>-->
+<!--        <kbd>S</kbd>-->
+<!--        <kbd>D</kbd>-->
+<!--        &nbsp;-->
+<!--        <kbd>↑</kbd>-->
+<!--        <kbd>←</kbd>-->
+<!--        <kbd>↓</kbd>-->
+<!--        <kbd>→</kbd>-->
+<!--      </p>-->
+    </div>
+
+
+    <script type="text/javascript" src="./src/utils.js"></script>
+    <script type="text/javascript" src="./src/ui.js"></script>
+    <script type="text/javascript" src="./src/index.js"></script>
+    <script type="text/javascript" src="./src/renderable.js"></script>
+    <script type="text/javascript" src="./src/radiosity.js"></script>
+    <script type="text/javascript" src="./src/camera.js"></script>
+    <script type="text/javascript" src="./src/radCam.js"></script>
   </body>
 </html>
