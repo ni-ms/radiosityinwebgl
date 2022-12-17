@@ -1,4 +1,27 @@
 // parse model
+
+/*
+
+This function appears to be a utility function for subdividing a 3D mesh into a grid of smaller triangles. It does this by taking a mesh with quadrilaterals (four-sided polygons) as its primitives and breaking each quad into a grid of smaller triangles.
+
+The function takes in a modelData object and the number of divisions nDivs to use for each quad. The modelData object has a meshes property, which is an array of mesh objects. Each mesh object has several properties, including vertexPositions, vertexNormals, and indices, which are arrays of vertex data for the mesh.
+
+The function iterates over the meshes array and processes each mesh individually. For each mesh, it processes each quad by:
+
+Creating a two-dimensional array vertexGrid to store the vertices of the subdivided quad.
+
+Calculating the change in position between each pair of vertices along the top and bottom edges of the quad and using these values to create the first and last rows of the vertexGrid.
+
+Calculating the change in position between the vertices at the top and bottom of each column of the vertexGrid and using these values to create the intermediate rows.
+
+Iterating over the rows and columns of the vertexGrid and using the vertex positions to create new vertices for the subdivided mesh. It also uses the normal of the original quad for all of the new vertices.
+
+Creating new indices for the subdivided mesh by connecting the vertices in the vertexGrid into triangles.
+
+Appending the new vertex positions, normals, and indices to the arrays newMeshVpositions, newMeshVnormals, and newMeshIndices, respectively.
+
+Finally, the function updates the original mesh object with the new vertex data and indices by replacing the values of the vertexPositions, vertexNormals, and indices properties with the contents of newMeshVpositions, newMeshVnormals, and newMeshIndices, respectively. This effectively replaces the original mesh with a subdivided version.
+ */
 function parseModelJson(jsonFile) {
   let xhr = new XMLHttpRequest();
   xhr.open("GET", jsonFile, true);

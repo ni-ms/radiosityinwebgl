@@ -42,6 +42,18 @@ function draw() {
   window.requestAnimationFrame(draw);
 }
 
+/*
+The function appears to be taking in an object with a triangles property, which is an array of triangle objects. It then performs several steps to compute the radiosity for each triangle:
+
+It iterates over the triangles array and finds the triangle with the highest unshotMag property. This property is likely a measure of the amount of light that has not yet been computed for the triangle.
+
+It sets up a camera and renders the scene from five different viewpoints, using the triangle's center, normal, tangent, and bitangent properties to determine the camera's position and orientation.
+
+It calls a function formFactors for each of the five renderings, passing in the rendering results, the index of the triangle being processed, and a value of 1 or 0. It's not clear what the formFactors function does, but it's likely that it calculates some kind of weighting or scaling factor based on the rendered image.
+
+It sets the triangle's unshot property to [0, 0, 0] and its unshotMag property to 0, indicating that all of the light for this triangle has now been computed.
+
+ */
 function interRadiosity(radiosity) {
   //1 added to meshID right before draw, so subtract to get correct meshID
   let max = -1;
@@ -120,6 +132,21 @@ function interRadiosity(radiosity) {
     radiosity.triangles[max].unshotMag = 0;
   }
 }
+/*
+This function appears to be a higher-level function that manages the process of generating radiosity for a 3D scene. It performs the following steps:
+
+It clears the color and depth buffers of the WebGL context gl.
+
+It enters a loop that runs for a specified number of iterations. For each iteration, it calls the interRadiosity function, passing in the radiosity object. It also checks the value of a run variable and exits the loop if run is false.
+
+If the current iteration is a multiple of 10, it calls the mapColor function on the radiosity object and then draws the scene using the draw function.
+
+If the loop completed all of its iterations, it sets the tempRadio and tempOrder variables to the radiosity object and the number of iterations, respectively, and then calls the mapColor function and the draw function to render the final result.
+
+If the loop exited early because run was false, it sets a timeout to call itself again with the remaining number of iterations, or it calls itself immediately if config.show is false.
+
+
+ */
 
 function genRadiosity(gl, radiosity, iterations) {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
